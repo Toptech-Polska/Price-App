@@ -3,7 +3,13 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import type { DateRange } from "react-day-picker";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { useOrderHistory, useProducts, useProductGroups, useSalesOpportunities, type OrderFiltersParams } from "@/hooks/useOrdersData";
+import {
+  useOrderHistory,
+  useProducts,
+  useProductGroups,
+  useSalesOpportunities,
+  type OrderFiltersParams,
+} from "@/hooks/useOrdersData";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -114,7 +120,13 @@ const Index = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(getStoredPageSize);
-  const [filters, setFilters] = useState<FilterState>({ search: "", clientName: "", productName: "", groupName: "", statuses: [] });
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    clientName: "",
+    productName: "",
+    groupName: "",
+    statuses: [],
+  });
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
@@ -150,8 +162,8 @@ const Index = () => {
     dateTo: dateRange?.to
       ? dateRange.to.toISOString().split("T")[0]
       : dateRange?.from
-      ? dateRange.from.toISOString().split("T")[0]
-      : undefined,
+        ? dateRange.from.toISOString().split("T")[0]
+        : undefined,
     search: filters.search || undefined,
   };
 
@@ -200,8 +212,6 @@ const Index = () => {
         });
       }
     }
-
-    
 
     const joined: ResultRow[] = ordersData.map((o: any) => {
       const key = o.product_name?.trim().toLowerCase() || "";
@@ -539,8 +549,7 @@ const Index = () => {
       if (data?.error) throw new Error(data.error);
       const count = data?.upserted ?? data?.count ?? "?";
       toast.success(`Synchronizacja zakończona: pobrano ${data?.fetched ?? "?"} zleceń, zapisano ${count}.`);
-      await queryClient.invalidateQueries({ queryKey: ["order_history"] });
-      await queryClient.refetchQueries({ queryKey: ["order_history"] });
+      queryClient.invalidateQueries({ queryKey: ["order_history"] });
     } catch (err: any) {
       console.error("[SYNC] Error:", err);
       toast.error(`Błąd synchronizacji: ${err.message}`);
