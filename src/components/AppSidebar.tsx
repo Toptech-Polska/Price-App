@@ -1,4 +1,4 @@
-import { BarChart3, Home, Package, Users, LogOut } from "lucide-react";
+import { BarChart3, Home, Package, Users, LogOut, LayoutGrid } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -98,7 +98,16 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto px-4 py-4 border-t border-sidebar-border">
+        <div className="mt-auto px-4 py-4 border-t border-sidebar-border space-y-1">
+          <a
+            href="https://tsps.pl/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm w-full transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+          >
+            <LayoutGrid className="h-4 w-4 shrink-0" />
+            <span>Hub aplikacji</span>
+          </a>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm w-full transition-colors text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground"
