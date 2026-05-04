@@ -10,7 +10,7 @@ import Index from "./pages/Index";
 import ProductPage from "./pages/ProductPage";
 import ProductsPage from "./pages/ProductsPage";
 import LoginPage from "./pages/LoginPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 import ReportsPage from "./pages/ReportsPage";
 import CustomersPage from "./pages/CustomersPage";
 import NotFound from "./pages/NotFound";
@@ -41,7 +41,7 @@ const App = () => (
           <AuthProvider>
             <Routes>
               <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/auth/callback" element={<AuthCallbackPage />} />
               <Route path="/" element={<ProtectedRoute><Layout><Index /></Layout></ProtectedRoute>} />
               <Route path="/products" element={<ProtectedRoute><Layout><ProductsPage /></Layout></ProtectedRoute>} />
               <Route path="/product/:name" element={<ProtectedRoute><Layout><ProductPage /></Layout></ProtectedRoute>} />
