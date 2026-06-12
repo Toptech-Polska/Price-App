@@ -26,11 +26,17 @@ import {
   ArrowDown,
   ArrowUpDown,
   RefreshCw,
+  Truck,
+  Undo2,
+  CalendarIcon,
 } from "lucide-react";
 import { OrderFilters, createEmptyFilters, type FilterState, type ToggleableColumn } from "@/components/OrderFilters";
 import { getStatusDisplay } from "@/components/StatusFilter";
 import { SalesOpportunityCell, type SalesOpportunity } from "@/components/SalesOpportunityCell";
 import { ProductDrawer, type ProductDrawerData } from "@/components/ProductDrawer";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { pl } from "date-fns/locale";
 import { toast } from "sonner";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
@@ -65,6 +71,10 @@ interface OrderRow {
   product_id?: string | null;
   status?: string | null;
   description: string | null;
+  shipped_at?: string | null;
+  production_order_id?: string | null;
+  order_uuid?: string | null;
+  production_order_number?: string | null;
 }
 
 interface ResultRow extends OrderRow {
@@ -111,6 +121,101 @@ const fuzzyClientMatch = (a: string, b: string): boolean => {
 };
 
 const norm = (s: string | null | undefined) => (s ?? "").trim().toLowerCase();
+
+interface ShippedCellProps {
+  row: ResultRow;
+  onChanged: () => void;
+}
+
+function ShippedCell({ row, onChanged }: ShippedCellProps) {
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date>(row.shipped_at ? new Date(row.shipped_at) : new Date());
+  const [busy, setBusy] = useState(false);
+
+  const isShipped = !!row.shipped_at;
+  const isoDate = () => date.toISOString().slice(0, 10);
+
+  const run = async (action: "single" | "order" | "unmark") => {
+    setBusy(true);
+    try {
+      if (action === "single") {
+        if (!row.production_order_id) throw new Error("Brak production_order_id");
+        const { error } = await supabase.rpc("mark_production_order_shipped", {
+          p_production_order_id: row.production_order_id,
+          p_shipped_at: isoDate(),
+        });
+        if (error) throw error;
+        toast.success("Pozycja oznaczona jako wysłana");
+      } else if (action === "order") {
+        if (!row.order_uuid) throw new Error("Brak order_uuid");
+        const { error } = await supabase.rpc("mark_order_shipped", {
+          p_order_id: row.order_uuid,
+          p_shipped_at: isoDate(),
+        });
+        if (error) throw error;
+        toast.success("Całe zamówienie oznaczone jako wysłane");
+      } else {
+        if (!row.production_order_id) throw new Error("Brak production_order_id");
+        const { error } = await supabase.rpc("unmark_production_order_shipped", {
+          p_production_order_id: row.production_order_id,
+        });
+        if (error) throw error;
+        toast.success("Cofnięto oznaczenie wysyłki");
+      }
+      onChanged();
+      setOpen(false);
+    } catch (err: any) {
+      toast.error(`Błąd: ${err.message}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
+            isShipped
+              ? "text-success hover:bg-success/10"
+              : "text-muted-foreground hover:bg-accent"
+          }`}
+          disabled={!row.production_order_id && !row.order_uuid}
+        >
+          <Truck className="h-3.5 w-3.5" />
+          {isShipped ? formatDate(row.shipped_at!) : "—"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="end">
+        <div className="p-3 space-y-2">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <CalendarIcon className="h-4 w-4" /> Data wysyłki
+          </div>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(d) => d && setDate(d)}
+            locale={pl}
+            className="p-0 pointer-events-auto"
+          />
+        </div>
+        <div className="border-t p-2 flex flex-col gap-1">
+          <Button size="sm" variant="default" disabled={busy || !row.production_order_id} onClick={() => run("single")}>
+            <Truck className="h-3.5 w-3.5" /> Oznacz tę pozycję
+          </Button>
+          <Button size="sm" variant="outline" disabled={busy || !row.order_uuid} onClick={() => run("order")}>
+            <Truck className="h-3.5 w-3.5" /> Wyślij całe zamówienie
+          </Button>
+          {isShipped && (
+            <Button size="sm" variant="ghost" disabled={busy || !row.production_order_id} onClick={() => run("unmark")}>
+              <Undo2 className="h-3.5 w-3.5" /> Cofnij wysyłkę
+            </Button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 const Index = () => {
   const queryClient = useQueryClient();
@@ -560,7 +665,7 @@ const Index = () => {
 
   // Dynamic col count for skeleton/empty rows
   const visibleColCount =
-    5 +
+    6 +
     (show("group_name") ? 1 : 0) +
     (show("client_name") ? 1 : 0) +
     (show("status") ? 1 : 0) +
@@ -682,6 +787,11 @@ const Index = () => {
                     </span>
                   </TableHead>
                 )}
+                <TableHead className="font-semibold min-w-[110px]">
+                  <span className="inline-flex items-center gap-1">
+                    <Truck className="h-3.5 w-3.5" /> Wysłano
+                  </span>
+                </TableHead>
                 <TableHead
                   className="font-semibold cursor-pointer select-none min-w-[80px] max-w-[100px]"
                   onClick={() => handleSort("szansa")}
@@ -802,6 +912,12 @@ const Index = () => {
                         </div>
                       </TableCell>
                     )}
+                    <TableCell>
+                      <ShippedCell
+                        row={row}
+                        onChanged={() => queryClient.invalidateQueries({ queryKey: ["order_history"] })}
+                      />
+                    </TableCell>
                     <TableCell>
                       {enriching && row.computed_opportunities.length === 0 ? (
                         <div className="h-4 w-16 bg-muted rounded animate-pulse" />
