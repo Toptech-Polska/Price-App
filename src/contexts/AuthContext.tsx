@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
     if (error) throw error;
-    if (data?.url) window.open(data.url, '_blank');
+    if (data?.url) window.open(data.url, 'google-oauth-popup', 'width=500,height=600');
   };
 
   return (
