@@ -76,17 +76,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [handleSession]);
 
-  useEffect(() => {
-    const channel = new BroadcastChannel('supabase:auth');
-    channel.onmessage = (event) => {
-      if (event.data === 'callback') {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          handleSession(session);
-        });
-      }
-    };
-    return () => channel.close();
-  }, [handleSession]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -97,15 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     setUnauthorized(false);
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
-        skipBrowserRedirect: true,
       },
     });
     if (error) throw error;
-    if (data?.url) window.open(data.url, 'google-oauth-popup', 'width=500,height=600');
   };
 
   return (

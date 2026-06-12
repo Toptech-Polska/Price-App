@@ -18,10 +18,6 @@ export default function AuthCallbackPage() {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
-        const channel = new BroadcastChannel('supabase:auth');
-        channel.postMessage('callback');
-        channel.close();
-        window.close();
         navigate('/', { replace: true });
       } else {
         navigate('/login', { replace: true });
