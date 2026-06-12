@@ -787,6 +787,11 @@ const Index = () => {
                     </span>
                   </TableHead>
                 )}
+                <TableHead className="font-semibold min-w-[110px]">
+                  <span className="inline-flex items-center gap-1">
+                    <Truck className="h-3.5 w-3.5" /> Wysłano
+                  </span>
+                </TableHead>
                 <TableHead
                   className="font-semibold cursor-pointer select-none min-w-[80px] max-w-[100px]"
                   onClick={() => handleSort("szansa")}
