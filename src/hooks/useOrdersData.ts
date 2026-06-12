@@ -19,8 +19,8 @@ export function useOrderHistory(filters?: OrderFiltersParams) {
           queryKey: ["order_history", filters],
           queryFn: async () => {
                   let query = supabase
-                    .from("v_order_history")
-                    .select("product_id, client_id, client_name, product_name, product_group, product_group_name, currency, price, quantity, prodio_order_id, order_date, description, status")
+                    .from("v_order_history_v2")
+                    .select("product_id, client_id, client_name, product_name, product_group, product_group_name, currency, price, quantity, prodio_order_id, order_date, description, status, shipped_at, production_order_id, order_uuid, production_order_number")
                     .gt("price", 0)
                     .not("client_name", "ilike", "%toptech%")
                     .not("client_name", "ilike", "%fly4u%")
