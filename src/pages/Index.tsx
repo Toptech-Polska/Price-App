@@ -665,7 +665,7 @@ const Index = () => {
 
   // Dynamic col count for skeleton/empty rows
   const visibleColCount =
-    5 +
+    6 +
     (show("group_name") ? 1 : 0) +
     (show("client_name") ? 1 : 0) +
     (show("status") ? 1 : 0) +
