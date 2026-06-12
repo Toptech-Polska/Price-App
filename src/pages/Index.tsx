@@ -65,6 +65,10 @@ interface OrderRow {
   product_id?: string | null;
   status?: string | null;
   description: string | null;
+  shipped_at?: string | null;
+  production_order_id?: string | null;
+  order_uuid?: string | null;
+  production_order_number?: string | null;
 }
 
 interface ResultRow extends OrderRow {
