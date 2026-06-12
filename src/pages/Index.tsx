@@ -814,7 +814,7 @@ const Index = () => {
                         <TooltipTrigger asChild>
                           {hasProdioLink(row) ? (
                             <a
-                              href={`https://toptech.getprodio.com/product/${row.product_id}`}
+                              href={`https://toptech.getprodio.com/app/product/view/${row.product_id}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center justify-center h-7 w-7 rounded-md text-primary hover:bg-accent transition-colors"

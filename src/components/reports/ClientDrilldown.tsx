@@ -25,7 +25,7 @@ import {
 import type { DateRange } from "react-day-picker";
 import * as XLSX from "xlsx";
 
-const PRODIO_BASE = "https://toptech.getprodio.com/product/";
+const PRODIO_BASE = "https://toptech.getprodio.com/app/product/view/";
 const ENDANGERED_DAYS = 45;
 
 const formatCurrency = (v: number) =>
