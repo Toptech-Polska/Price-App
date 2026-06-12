@@ -76,6 +76,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data === 'supabase:auth:callback') {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session) {
+            // trigger same handling via auth state change
+            supabase.auth.setSession(session);
+          }
+        });
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     window.location.href = '/login';
