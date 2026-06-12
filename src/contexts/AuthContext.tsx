@@ -77,15 +77,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [handleSession]);
 
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data === 'supabase:auth:callback') {
+    const channel = new BroadcastChannel('supabase:auth');
+    channel.onmessage = (event) => {
+      if (event.data === 'callback') {
         supabase.auth.getSession().then(({ data: { session } }) => {
           handleSession(session);
         });
       }
     };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    return () => channel.close();
   }, [handleSession]);
 
   const signOut = async () => {
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
     if (error) throw error;
-    if (data?.url) window.open(data.url, '_blank');
+    if (data?.url) window.open(data.url, 'google-oauth-popup', 'width=500,height=600');
   };
 
   return (
