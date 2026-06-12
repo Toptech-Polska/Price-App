@@ -6,13 +6,29 @@ export default function AuthCallbackPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    (async () => {
+      try {
+        if (window.location.search.includes('code=')) {
+          await supabase.auth.exchangeCodeForSession(window.location.search);
+        }
+      } catch {
+        // ignore — fallback to getSession
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (window.opener) {
+        window.opener.postMessage('supabase:auth:callback', window.location.origin);
+        window.close();
+        return;
+      }
+
       if (session) {
         navigate('/', { replace: true });
       } else {
         navigate('/login', { replace: true });
       }
-    });
+    })();
   }, [navigate]);
 
   return (
