@@ -17,13 +17,11 @@ export default function AuthCallbackPage() {
 
       const { data: { session } } = await supabase.auth.getSession();
 
-      if (window.opener) {
-        window.opener.postMessage('supabase:auth:callback', window.location.origin);
-        window.close();
-        return;
-      }
-
       if (session) {
+        const channel = new BroadcastChannel('supabase:auth');
+        channel.postMessage('callback');
+        channel.close();
+        window.close();
         navigate('/', { replace: true });
       } else {
         navigate('/login', { replace: true });
