@@ -913,6 +913,12 @@ const Index = () => {
                       </TableCell>
                     )}
                     <TableCell>
+                      <ShippedCell
+                        row={row}
+                        onChanged={() => queryClient.invalidateQueries({ queryKey: ["order_history"] })}
+                      />
+                    </TableCell>
+                    <TableCell>
                       {enriching && row.computed_opportunities.length === 0 ? (
                         <div className="h-4 w-16 bg-muted rounded animate-pulse" />
                       ) : (
