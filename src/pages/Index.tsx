@@ -36,6 +36,7 @@ import { SalesOpportunityCell, type SalesOpportunity } from "@/components/SalesO
 import { ProductDrawer, type ProductDrawerData } from "@/components/ProductDrawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { toast } from "sonner";
 
@@ -133,7 +134,7 @@ function ShippedCell({ row, onChanged }: ShippedCellProps) {
   const [busy, setBusy] = useState(false);
 
   const isShipped = !!row.shipped_at;
-  const isoDate = () => date.toISOString().slice(0, 10);
+  const isoDate = () => format(date, "yyyy-MM-dd");
 
   const run = async (action: "single" | "order" | "unmark") => {
     setBusy(true);
