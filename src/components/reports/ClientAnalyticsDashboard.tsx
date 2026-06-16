@@ -32,7 +32,7 @@ const formatCompact = (v: number) => {
   return v.toFixed(0);
 };
 
-const PRODIO_BASE = "https://toptech.getprodio.com/product/";
+const PRODIO_BASE = "https://toptech.getprodio.com/app/product/view/";
 
 interface ClientAnalyticsDashboardProps {
   orders: any[];
