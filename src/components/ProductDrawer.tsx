@@ -517,7 +517,7 @@ export function ProductDrawer({
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <a
-                                        href={`https://toptech.getprodio.com/product/${sp.product_id}`}
+                                        href={`https://toptech.getprodio.com/app/product/view/${sp.product_id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center justify-center h-6 w-6 rounded text-primary hover:bg-accent transition-colors"
@@ -616,7 +616,7 @@ export function ProductDrawer({
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <a
-                                    href={`https://toptech.getprodio.com/product/${op.product_id}`}
+                                    href={`https://toptech.getprodio.com/app/product/view/${op.product_id}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center justify-center h-6 w-6 rounded text-primary hover:bg-accent transition-colors"
